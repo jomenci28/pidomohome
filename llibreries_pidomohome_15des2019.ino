@@ -480,10 +480,9 @@ void loop() {
   
   if (!client.connected()) {
 
-    if (mqttConnectedFlag) mqttConnectedFlag = false; // Reset flag MQTT connection
+    if (mqttConnectedFlag) mqttConnectedFlag = false; 
 
-    Serial.print("Connectant ...\n");
-    // give the Ethernet controller time to start:
+    Serial.print("Connectant el microcontrolador al port ...\n");
     delay(1000);
 
     // Attempt to start via DHCP. If not, do it manually:
