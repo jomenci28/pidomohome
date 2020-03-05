@@ -19,7 +19,7 @@ EthernetClient ethClient;
 PubSubClient client(ethClient);
 
 
-//Definir PINs i variables dels sensors
+//definir pins
 #define DHTTYPE DHT22
 
 const int LDRPin = A10;
@@ -45,17 +45,17 @@ const int RELAY7Pin = 32;
 DHT dht(DHTPin, DHTTYPE);
 DHT dht2(DHT2Pin, DHTTYPE);
 
-
+//definir variables dels sensors
 unsigned long prevMillis1 = 0;
 unsigned long prevMillis2 = 0;
 unsigned long time_now_1 = 0;
 unsigned long time_now_2 = 0;
 float lum = 0;
-char lumStr[25];
-char humStr[30];
-char hum2Str[30];
-char tempStr[25];
-char temp2Str[25];
+char lumvalue[25];
+char humvalue[30];
+char hum2value[30];
+char tempvalue[25];
+char temp2value[25];
 int pirState = 2;
 int trigger = 0;
 int hcsrState = 2;
@@ -74,11 +74,11 @@ int relay4State;
 int relay5State;
 int relay6State;
 int relay7State;
-char waterStr;
-char doorStr;
-char sirenaStr;
-char indicationStr;
-char powerStr;
+char watervalue;
+char doorvalue;
+char sirenavalue;
+char indicationvalue;
+char powervalue;
 
 
 
@@ -86,14 +86,14 @@ char powerStr;
 void reconnect(){
   
   while (!client.connected()) {
-    Serial.println("Estanlint la connexió...");
+    Serial.println("Connectant...");
     if (client.connect("Arduino_Client")) {
-      Serial.println("Connectat correctament");
+      Serial.println("Connectat");
     }else{
       Serial.print(F("Error de connexió, rc="));
       Serial.print(client.state());
-      Serial.println(F("Es reintentarà en 2 segons"));
-      delay(2000);
+      Serial.println(F("Es provarà de tornar a connectar en 3 segons"));
+      delay(3000);
     }
   }
   
@@ -109,8 +109,8 @@ void lightRead(){
 
       int inputLDR = analogRead(LDRPin);
       lum = map(inputLDR, 0, 1023, 0, 100);//Definició del resultat a un valor en 0 i 100
-      dtostrf(lum, 2, 1, lumStr);
-      client.publish("pidomohome/luminosity", lumStr);
+      dtostrf(lum, 2, 1, lumvalue);
+      client.publish("pidomohome/luminosity", lumvalue);
 
 
 }
@@ -121,17 +121,17 @@ void dhtRead(){
   
   dht.begin();
   float t = dht.readTemperature();
-  dtostrf(t, 1, 1, tempStr);  //transforma float type a cadena de caracters -> 1 caracters maxims total i 1 decimals
-  client.publish("pidomohome/temperature", tempStr);
+  dtostrf(t, 1, 1, tempvalue);  //transforma float type a cadena de caracters -> 1 caracters maxims total i 1 decimals
+  client.publish("pidomohome/temperature", tempvalue);
   Serial.println ("temperature done");
   float h = dht.readHumidity();
-  dtostrf(h, 1, 1, humStr);
+  dtostrf(h, 1, 1, humvalue);
   if (isnan(h) || isnan(t)) {
       Serial.println("Error de lectura del sensor de temperatura i humitat");
       return;
   }
   delay(300); // esperem a publicar per seguretat
-  client.publish("pidomohome/humidity", humStr);
+  client.publish("pidomohome/humidity", humvalue);
   Serial.println ("humidity done");
 }
 
@@ -141,17 +141,17 @@ void dht2Read(){
   
   dht2.begin();
   float t = dht2.readTemperature();
-  dtostrf(t, 1, 1, temp2Str);  //transforma float type a cadena de caracters -> 1 caracters maxims total i 1 decimals
-  client.publish("pidomohome/out_temperature", temp2Str);
+  dtostrf(t, 1, 1, temp2value);  //transforma float type a cadena de caracters -> 1 caracters maxims total i 1 decimals
+  client.publish("pidomohome/out_temperature", temp2value);
   Serial.println ("temperature2 done");
   float h = dht2.readHumidity();
-  dtostrf(h, 1, 1, hum2Str);
+  dtostrf(h, 1, 1, hum2value);
   if (isnan(h) || isnan(t)) {
       Serial.println("Error de lectura del sensor DHT-22");
       return;
   }
   delay(300); // esperem a publicar per seguretat
-  client.publish("pidomohome/out_humidity", hum2Str);
+  client.publish("pidomohome/out_humidity", hum2value);
   Serial.println ("humidity2 done");
 }
 
